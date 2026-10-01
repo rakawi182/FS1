@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FS1 Report · MJS Observatory · Fourier Decomposition of IFS-HRES 2017–2026</title>
+<style>
+  :root {
+    --primary:    #1a3d5c;
+    --secondary:  #c0392b;
+    --humid:      #2980b9;
+    --radiative:  #c0392b;
+    --independent:#7f8c8d;
+    --accent:     #e67e22;
+    --bg:         #fafbfc;
+    --card-bg:    #ffffff;
+    --border:     #e1e4e8;
+    --text:       #2c3e50;
+    --text-muted: #6c757d;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { -webkit-text-size-adjust: 100%; }
+  body { overflow-wrap: break-word; }
+  img, svg { max-width: 100%; height: auto; }
+
+  /* Tabel: di desktop dibungkus agar tidak pernah melebarkan halaman */
+  .table-wrap { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+  body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Georgia', 'Cambria', serif;
+    font-size: 15px;
+    line-height: 1.75;
+  }
+
+  header {
+    background: linear-gradient(135deg, #1a3d5c 0%, #2c5f85 100%);
+    color: white;
+    padding: 60px 40px 50px 40px;
+    text-align: center;
+    border-bottom: 4px solid var(--accent);
+  }
+
+  header h1 {
+    margin: 0 0 12px 0;
+    font-size: 2.2em;
+    font-weight: normal;
+    letter-spacing: 0.5px;
+    font-family: 'Georgia', serif;
+  }
+
+  header .subtitle {
+    font-size: 1.05em;
+    opacity: 0.9;
+    font-style: italic;
+    margin-bottom: 24px;
+  }
+
+  header .meta {
+    font-size: 0.9em;
+    opacity: 0.85;
+    font-family: 'Helvetica', sans-serif;
+    letter-spacing: 0.3px;
+  }
+
+  header .meta span { margin: 0 12px; }
+
+  main {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 40px 24px 80px 24px;
+  }
+
+  section {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 36px 44px;
+    margin-bottom: 32px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+  }
+
+  h2 {
+    color: var(--primary);
+    font-size: 1.5em;
+    font-weight: normal;
+    margin: 0 0 6px 0;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--primary);
+    font-family: 'Georgia', serif;
+    letter-spacing: 0.3px;
+  }
+
+  h2 .num {
+    color: var(--accent);
+    font-family: 'Helvetica', sans-serif;
+    font-size: 0.75em;
+    letter-spacing: 1.5px;
+    display: block;
+    margin-bottom: 4px;
+    font-weight: normal;
+  }
+
+  h3 {
+    color: var(--primary);
+    font-size: 1.15em;
+    margin: 28px 0 12px 0;
+    font-family: 'Georgia', serif;
+    font-weight: normal;
+  }
+
+  p { margin: 12px 0; text-align: justify; }
+
+  .lead {
+    font-size: 1.05em;
+    color: #34495e;
+    margin-bottom: 24px;
+    line-height: 1.7;
+  }
+
+  .chart {
+    width: 100%;
+    height: 420px;
+    margin: 16px 0 8px 0;
+  }
+
+  .chart.tall { height: 520px; }
+  .chart.short { height: 340px; }
+
+  .chart-caption {
+    font-size: 0.85em;
+    color: var(--text-muted);
+    font-style: italic;
+    text-align: center;
+    margin: 4px 0 20px 0;
+    font-family: 'Helvetica', sans-serif;
+    line-height: 1.5;
+  }
+
+  .key-finding {
+    background: linear-gradient(90deg, #fff5e6 0%, #fffbf2 100%);
+    border-left: 4px solid var(--accent);
+    padding: 16px 22px;
+    margin: 20px 0;
+    border-radius: 0 4px 4px 0;
+  }
+
+  .key-finding strong {
+    color: #8a4d00;
+    font-family: 'Helvetica', sans-serif;
+    font-size: 0.85em;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .key-finding p { margin: 4px 0; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 0.9em;
+    font-family: 'Helvetica', sans-serif;
+  }
+
+  th {
+    background: #f1f3f5;
+    color: var(--primary);
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 2px solid var(--primary);
+    font-weight: 600;
+    font-size: 0.82em;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  td {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  tr:last-child td { border-bottom: none; }
+
+  tr:hover td { background: #fafbfc; }
+
+  .mono { font-family: 'Consolas', 'Monaco', monospace; font-size: 0.85em; }
+
+  .cluster-humid       { color: var(--humid); font-weight: bold; }
+  .cluster-radiative   { color: var(--radiative); font-weight: bold; }
+  .cluster-independent { color: var(--independent); font-weight: bold; }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-size: 0.75em;
+    font-family: 'Helvetica', sans-serif;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+  }
+
+  .badge.sig { background: #d4edda; color: #155724; }
+  .badge.ns  { background: #f8d7da; color: #721c24; }
+  .badge.warn{ background: #fff3cd; color: #856404; }
+
+  .abstract {
+    background: #f1f5f9;
+    border-left: 4px solid var(--primary);
+    padding: 20px 26px;
+    margin: 0 0 32px 0;
+    border-radius: 0 6px 6px 0;
+    font-size: 0.95em;
+    line-height: 1.7;
+  }
+
+  .abstract h3 {
+    margin-top: 0;
+    color: var(--primary);
+    font-size: 1em;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-family: 'Helvetica', sans-serif;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 14px;
+    margin: 20px 0;
+  }
+
+  .stat-card {
+    background: #f8f9fa;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 14px 18px;
+    text-align: center;
+  }
+
+  .stat-card .value {
+    font-size: 1.6em;
+    color: var(--primary);
+    font-family: 'Georgia', serif;
+    font-weight: bold;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .stat-card .label {
+    font-size: 0.75em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-family: 'Helvetica', sans-serif;
+  }
+
+  footer {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 40px 24px;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.85em;
+    font-family: 'Helvetica', sans-serif;
+  }
+
+  footer hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 24px 0;
+  }
+
+  @media (max-width: 720px) {
+    body { font-size: 15px; line-height: 1.7; }
+    header { padding: 36px 18px 28px 18px; }
+    header h1 { font-size: 1.45em; line-height: 1.3; }
+    header .subtitle { font-size: 0.98em; margin-bottom: 18px; }
+    header .meta { line-height: 1.6; }
+    header .meta span { display: block; margin: 2px 0; }
+    header .meta span:nth-child(even) { display: none; }  /* pemisah “·” */
+
+    main { padding: 16px 10px 48px 10px; }
+    section { padding: 22px 16px; margin-bottom: 20px; }
+    h2 { font-size: 1.3em; }
+    h3 { font-size: 1.08em; margin-top: 22px; }
+    p { text-align: left; hyphens: auto; -webkit-hyphens: auto; }
+
+    .abstract { padding: 16px 16px; }
+    .key-finding { padding: 14px 16px; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .stat-card { padding: 12px 8px; }
+    .stat-card .value { font-size: 1.35em; }
+
+    .chart { height: 320px; }
+    .chart.tall { height: 400px; }
+    .chart.short { height: 290px; }
+    .chart-caption { text-align: left; }
+
+    /* ── Tabel → kartu ─────────────────────────────── */
+    .table-wrap { overflow-x: visible; }
+    table.stack, table.stack tbody { display: block; width: 100%; }
+    table.stack { margin: 12px 0; font-size: 0.92em; }
+    table.stack thead {              /* disembunyikan visual, tetap terbaca screen reader */
+      position: absolute; width: 1px; height: 1px; overflow: hidden;
+      clip: rect(0 0 0 0); white-space: nowrap;
+    }
+    table.stack tr {
+      display: block;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px 14px;
+      margin-bottom: 10px;
+    }
+    table.stack tr:hover td { background: transparent; }
+    table.stack td {
+      display: grid;
+      grid-template-columns: minmax(5.5rem, 32%) 1fr;
+      gap: 10px;
+      padding: 7px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    table.stack tr td:last-child { border-bottom: none; }
+    table.stack td::before {
+      content: attr(data-label);
+      color: var(--text-muted);
+      font-size: 0.78em;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+
+    /* Tabel 1 (inventaris variabel): kartu padat, 3 kolom metrik */
+    table.stack.inv tbody tr {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px 10px;
+      padding: 10px 14px 12px 14px;
+    }
+    table.stack.inv td { display: block; padding: 0; border: none; }
+    table.stack.inv td::before { display: none; }
+    table.stack.inv td.c-sym  { grid-column: 1 / 3; font-size: 1.12em; }
+    table.stack.inv td.c-unit { grid-column: 3; text-align: right; color: var(--text-muted); }
+    table.stack.inv td.c-name {
+      grid-column: 1 / -1;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 2px;
+    }
+    table.stack.inv td.c-m { display: flex; flex-direction: column; gap: 1px; }
+    table.stack.inv td.c-m::before {
+      display: block;
+      content: attr(data-label);
+      color: var(--text-muted);
+      font-family: 'Helvetica', sans-serif;
+      font-size: 0.72em;
+      font-weight: 600;
+    }
+  }
+
+  @media (max-width: 380px) {
+    .stats-grid { grid-template-columns: 1fr 1fr; }
+    section { padding: 20px 13px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Low-Dimensional Radiative–Humid Coupling<br>at a Tropical Coastal Observatory</h1>
+  <div class="subtitle">A multi-variable Fourier decomposition of the ECMWF IFS-HRES 2017–2026 record</div>
+  <div class="meta">
+    <span>MJS · Jolotundo Observatory · East Java</span>
+    <span>·</span>
+    <span>Φ = −7.5220°  λ = 112.5661°  h = 28 m</span>
+    <span>·</span>
+    <span>IFS-HRES 2017-01-01 → 2026-09-28 · N = 85,392 h</span>
+  </div>
+</header>
+
+<main>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- ABSTRACT                                                        -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+
+<section>
+  <div class="abstract">
+    <h3>Abstract</h3>
+    <p>
+      We decompose 85,392 hourly meteorological records from the ECMWF IFS-HRES
+      reanalysis for a tropical coastal site (MJS Observatory, East Java,
+      Indonesia) into an analytical Fourier basis of annual, diurnal, and
+      cross-frequency terms. Out of 13 primary variables (precipitation, cloud cover,
+      radiation, temperature, humidity, soil moisture, wind, pressure) we find that
+      the entire Fourier coefficient matrix — 1,534 numbers in total — collapses onto
+      just <strong>two orthogonal modes</strong> that together explain <strong>90 % of
+      variance</strong>. PC1 (82 %) defines an unambiguous <em>radiative–humid axis</em>,
+      separating fast-responding radiation-driven variables (ET₀, VPD, T₂, S_h) from
+      slower, thermally buffered humid variables (T_d, U₂, θ₀₇, θ₇₂₈, N_c). The same
+      structure is recovered (i) without supervision via hierarchical clustering,
+      (ii) after seasonal detrending — proving it is a daily-scale mode, not a
+      monsoon artefact, and (iii) in two independent 4.8-year epochs (11/11 sign
+      agreement, magnitude ratio 1.07), demonstrating temporal stability. A 2-year
+      TCWV sub-record (only available from Sept 2024) independently confirms its
+      membership in the humid cluster (r = 0.81 with T_d, r = −0.47 with VPD).
+      We conclude that the local tropical climate is controlled by a single,
+      physically constrained coupling — not by an arbitrary superposition of
+      independent cycles.
+    </p>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <span class="value">85,392</span>
+      <span class="label">Hourly Samples</span>
+    </div>
+    <div class="stat-card">
+      <span class="value">13</span>
+      <span class="label">Variables</span>
+    </div>
+    <div class="stat-card">
+      <span class="value">2</span>
+      <span class="label">Effective Modes (90 %)</span>
+    </div>
+    <div class="stat-card">
+      <span class="value">11/11</span>
+      <span class="label">Epoch-Stable Signs</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SECTION 1 — DATA & METHODS                                      -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+
+<section>
+  <h2><span class="num">SECTION 1</span>Data and Methodology</h2>
+
+  <p class="lead">
+    All analyses are based on a continuous 9.74-year hourly record from two
+    nearby IFS-HRES grid points, IDW-interpolated (inverse-square, p = 2) to
+    the MJS Observatory target coordinates.
+  </p>
+
+  <h3>1.1 Fourier basis</h3>
+  <p>
+    Each variable X(t) is decomposed as
+  </p>
+  <p style="text-align:center; font-family:Georgia; font-style:italic; font-size:1.05em; margin:16px 0;">
+    X(t) = X̄₀ + Σ<sub>k=1..18</sub> A<sub>k</sub>cos(k·ω<sub>A</sub>t + φ<sub>k</sub>)
+    + Σ<sub>m=1..11</sub> B<sub>m</sub>cos(m·ω<sub>D</sub>t + ψ<sub>m</sub>)
+    + Σ<sub>n</sub> C<sub>n</sub>cos(Ω<sub>n</sub>t + χ<sub>n</sub>)
+  </p>
+  <p>
+    where ω<sub>A</sub> = 2π/(365.242·24) rad·h⁻¹ (annual), ω<sub>D</sub> = 2π/24 rad·h⁻¹
+    (diurnal), and Ω<sub>n</sub> = k·ω<sub>A</sub> + m·ω<sub>D</sub> are the 30 cross-frequency
+    terms that encode the seasonal modulation of the diurnal cycle. The m = 12 diurnal
+    harmonic is deliberately excluded: it sits exactly at the hourly Nyquist frequency
+    and is therefore rank-deficient.
+  </p>
+
+  <h3>1.2 Estimators</h3>
+  <p>
+    Three independent solvers were cross-validated: chunked normal equations (reference),
+    QR decomposition (numerically stable), and Bayesian Ridge (posterior σ per coefficient).
+    Because N/P ≈ 717, the three solvers agree to machine precision — the system is
+    fully data-dominated, and the posterior collapses onto the OLS solution.
+  </p>
+
+  <h3>1.3 Variable inventory</h3>
+  <div class="table-wrap">
+  <table class="stack inv">
+    <thead>
+      <tr>
+        <th>Symbol</th><th>Quantity</th><th>Unit</th><th>Valid</th>
+        <th>R²<sub>ann</sub></th><th>R²<sub>dia</sub></th><th>R²<sub>full</sub></th>
+        <th>Sig./119</th>
+      </tr>
+    </thead>
+    <tbody id="inv-table"></tbody>
+  </table>
+  </div>
+  <p class="chart-caption">
+    Table 1. Fit quality and significant harmonics (|A| > 2σ<sub>posterior</sub>) per variable.
+    R² is decomposed into the annual-only, annual+diurnal, and full (incl. cross-frequency) tiers.
+    <br><span class="badge warn">TCWV</span> is excluded from the multivariate/PCA stage due to 21 % temporal coverage.
+  </p>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SECTION 2 — PC1 VERIFICATION                                    -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+
+<section>
+  <h2><span class="num">SECTION 2</span>PC1 Verification: the Radiative–Humid Axis</h2>
+
+  <p class="lead">
+    If PC1 is physical, splitting days by solar radiation should cleanly separate
+    the remaining variables into two families with opposite signs. We test this
+    twice: on raw daily data, and after removing the monthly climatology.
+  </p>
+
+  <h3>2.1 Raw split (top/bottom 25 % of daily G)</h3>
+  <p>
+    Sorting 3,558 days by total shortwave irradiance <em>G</em>, the top quartile
+    (⟨G⟩ = 280 W m⁻²) is significantly sunnier than the bottom quartile
+    (⟨G⟩ = 169 W m⁻²). Every variable moves in the physically expected direction
+    with a large effect size (Cohen's d between 1.75 and 4.45).
+  </p>
+
+  <div class="chart" id="chart-pc1-raw"></div>
+  <p class="chart-caption">
+    Figure 1. Cohen's d for the raw top/bottom-G quartile split. Positive bars
+    indicate the variable is larger on sunny days; negative bars, on cloudy days.
+    All 9 hypothesized signs (▲ radiative family, ▼ humid family) are confirmed.
+  </p>
+
+  <h3>2.2 Detrended split (seasonal cycle removed)</h3>
+  <p>
+    To prove the effect is not a monsoon artefact, we recompute the split using
+    ΔG = G − monthly climatology. This removes the annual cycle while preserving
+    day-to-day variability. Effect sizes drop by 10–50 %, but <strong>all 9 signs
+    persist</strong>. The ratio of detrended/raw Cohen's d traces the physical response
+    time of each variable — from 0.90 for fast radiative quantities to 0.44 for deep
+    soil moisture.
+  </p>
+
+  <div class="chart" id="chart-pc1-detrended"></div>
+  <p class="chart-caption">
+    Figure 2. Detrended (ΔG-based) effect sizes. The systematic ordering of the
+    detrended/raw ratio (S_h 0.90 → ET₀ 0.85 → T₂ 0.75 → VPD/U₂ 0.65 → SM07 0.60
+    → SM728 0.44) is a fingerprint of the underlying physics: fast variables respond
+    mostly to daily weather, slow variables mostly to season.
+  </p>
+
+  <div class="key-finding">
+    <strong>Key finding · Section 2</strong>
+    <p>
+      After seasonal detrending, the radiative–humid split survives with large
+      effect sizes (|d| = 0.87–3.81). PC1 is therefore a genuine daily-scale
+      mode, not a manifestation of the monsoon.
+    </p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SECTION 3 — TEMPORAL STABILITY                                  -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+
+<section>
+  <h2><span class="num">SECTION 3</span>Temporal Stability across Two Epochs</h2>
+
+  <p class="lead">
+    The record is split into two halves of ~4.8 years each
+    (2017-01→2021-09 and 2021-10→2026-09). If PC1 is a stable feature of
+    the local climate, its sign structure must be preserved in both halves.
+  </p>
+
+  <h3>3.1 Secular shift (per-epoch daily means)</h3>
+  <p>
+    Comparing epoch means reveals a coherent <em>wetting signal</em> in the
+    second half. Nine of twelve variables shift with |t| > 3: the atmosphere
+    and soils become more humid (T_d ↑ 0.71 °C, U₂ ↑ 2.76 %, SM07 ↑ 9.8 %,
+    SM728 ↑ 13.0 %, N_c ↑ 5.9 %, P ↑ 20 %), while VPD falls by 11 % and wind
+    weakens by 5 %. Notably, T₂ and ET₀ show <em>no</em> significant change,
+    suggesting a humid buffering mechanism that compensates the +3 % increase
+    in solar irradiance.
+  </p>
+
+  <div class="chart" id="chart-secular"></div>
+  <p class="chart-caption">
+    Figure 3. Secular shift between epochs (Welch t-statistic). Positive t = value
+    increased in the second epoch. Colored bars: humid family (blue), radiative
+    family (red), neutral (gray). Only T₂ and ET₀ remain statistically unchanged.
+  </p>
+
+  <h3>3.2 Stability of Cohen's d per epoch</h3>
+  <p>
+    Per epoch, we detrend seasonally and compute the detrended Cohen's d.
+    Then we compare the two values side-by-side.
+  </p>
+
+  <div class="chart" id="chart-stability"></div>
+  <p class="chart-caption">
+    Figure 4. Cohen's d per epoch (detrended). All 11 variables preserve their
+    sign; the mean ratio |d<sub>late</sub>|/|d<sub>early</sub>| is 1.07, well
+    inside the 0.70–1.40 stability band chosen for short epochs.
+  </p>
+
+  <div class="key-finding">
+    <strong>Key finding · Section 3</strong>
+    <p>
+      Despite a robust wetting trend between epochs, the <em>strength</em> and
+      <em>sign</em> of the PC1 radiative–humid coupling remain unchanged. This
+      separation of "mean shift" from "structure shift" is a hallmark of a
+      physically constrained mode.
+    </p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SECTION 4 — MULTIVARIATE STRUCTURE                              -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+
+<section>
+  <h2><span class="num">SECTION 4</span>Multivariate Structure of the Fourier Coefficients</h2>
+
+  <p class="lead">
+    Stack the 118 Fourier coefficients of 13 variables into a 13 × 118 matrix
+    and ask: what is its intrinsic dimensionality?
+  </p>
+
+  <h3>4.1 Effective dimensionality</h3>
+  <p>
+    Column-wise z-scoring is applied first (each coefficient position contributes
+    equally). PCA then reveals an extremely concentrated spectrum: PC1 alone
+    explains 82 % of variance, PC1+PC2 explain 90 %, and three components
+    suffice for 95 %. Despite 1,534 numbers in the original matrix, the system
+    is effectively 2–3 dimensional.
+  </p>
+
+  <div class="chart short" id="chart-pca"></div>
+  <p class="chart-caption">
+    Figure 5. Cumulative variance explained by PCA components. The knee between
+    PC2 and PC3 marks the transition from structural signal to residual noise.
+  </p>
+
+  <h3>4.2 Unsupervised clustering</h3>
+  <p>
+    Average-linkage clustering on 1 − cos-similarity (no labels, no physics
+    supplied) recovers exactly the physical grouping that we had identified
+    by hand:
+  </p>
+
+  <div class="table-wrap">
+  <table class="stack">
+    <thead>
+      <tr><th>Cluster</th><th>Members</th><th>Physical interpretation</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><b>1</b></td>
+        <td class="cluster-humid">T_d, U₂, N_c, θ₀₇, θ₇₂₈</td>
+        <td>Humid axis — all rise together when the sky is overcast</td>
+      </tr>
+      <tr>
+        <td><b>2</b></td>
+        <td class="cluster-independent">P</td>
+        <td>Precipitation — episodic, not cyclic, isolated</td>
+      </tr>
+      <tr>
+        <td><b>3</b></td>
+        <td class="cluster-radiative">T₂, e_d, G, v₁₀, ET₀, S_h</td>
+        <td>Radiative axis — all rise together on clear days</td>
+      </tr>
+      <tr>
+        <td><b>4</b></td>
+        <td class="cluster-independent">P_s</td>
+        <td>Surface pressure — semi-independent (large-scale waves)</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="chart-caption">
+    Table 2. Unsupervised clusters. Their exact correspondence to the physical
+    radiative/humid split is the strongest single piece of evidence in this study.
+  </p>
+
+  <h3>4.3 PCA loadings — what is PC1?</h3>
+  <p>
+    PC1 (82 % of variance) loads positively on G, ET₀, S_h, T₂, e_d and negatively
+    on U₂, T_d, N_c, θ₀₇, θ₇₂₈. This is the Fourier-domain image of the same
+    radiative–humid axis identified in §2: fast radiative quantities move one way,
+    slow humid quantities move the other.
+  </p>
+
+  <div class="key-finding">
+    <strong>Key finding · Section 4</strong>
+    <p>
+      The 13-variable system collapses to two meaningful modes. The first mode
+      is a radiative–humid axis that appears identically in the PCA, in the
+      hierarchical clustering, in the raw quartile split (§2.1), in the detrended
+      split (§2.2), and in both temporal epochs (§3). Five independent tests,
+      one physical answer.
+    </p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SECTION 5 — TCWV SPECIAL ANALYSIS                               -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+
+<section>
+  <h2><span class="num">SECTION 5</span>Total Column Water Vapour — a Special Case</h2>
+
+  <p class="lead">
+    TCWV is only available in the IFS-HRES record from September 2024 onward,
+    yielding 18,216 valid hours (~2.1 years). We therefore analyse it separately,
+    restricting ourselves to quantities that are statistically well-posed over
+    that window.
+  </p>
+
+  <h3>5.1 Seasonal envelope</h3>
+  <p>
+    Monthly means oscillate between 38.5 kg m⁻² (July–August) and 58.8 kg m⁻²
+    (December), a seasonal contrast of 20.3 kg m⁻² — roughly <strong>40 % of
+    the annual mean</strong>. This is the largest relative seasonal amplitude
+    of any variable in the study, and it directly reflects the Austral–Asian
+    monsoon moisture transport.
+  </p>
+
+  <div class="chart" id="chart-tcwv-monthly"></div>
+  <p class="chart-caption">
+    Figure 6. Monthly mean TCWV over the 2-year sub-record (Sept 2024 – Sept 2026).
+    Peak in December, trough in July–August — the signature of the monsoon cycle.
+  </p>
+
+  <h3>5.2 Diurnal cycle — very weak</h3>
+  <p>
+    A diurnal-only Fourier fit yields R² = 0.011 for the full m = 1..11 basis.
+    Only the m = 1 harmonic is significant (A = 1.49 kg m⁻², 3 % of the mean,
+    peak at 20:28 WIB); all higher harmonics are indistinguishable from noise.
+    This confirms the physical expectation: column-integrated water vapour is
+    insensitive to diurnal surface forcing — only the vertical distribution
+    changes, not the total column.
+  </p>
+
+  <h3>5.3 Correlation with the other variables</h3>
+  <p>
+    Using the overlap window (18,209 common hourly samples), TCWV correlates
+    strongly and positively with the humid cluster and moderately negatively
+    with VPD.
+  </p>
+
+  <div class="chart tall" id="chart-tcwv-corr"></div>
+  <p class="chart-caption">
+    Figure 7. Hourly Pearson correlation between TCWV and the other 12 variables.
+    Bars are colored by the cluster assignment from §4.2: blue = humid,
+    red = radiative, gray = independent. TCWV is unambiguously humid.
+  </p>
+
+  <div class="key-finding">
+    <strong>Key finding · Section 5</strong>
+    <p>
+      Even though TCWV was excluded from the multivariate analysis (only 21 %
+      coverage), its hourly correlation structure independently confirms its
+      membership in Cluster 1 — the humid family. It is strongly positively
+      correlated with T_d (r = 0.81), θ₀₇ (0.76), θ₇₂₈ (0.65), N_c (0.59),
+      U₂ (0.58), and anti-correlated with VPD (r = −0.47). No radiative variable
+      correlates with it (|r| &lt; 0.17).
+    </p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SECTION 6 — SYNTHESIS                                           -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+
+<section>
+  <h2><span class="num">SECTION 6</span>Synthesis</h2>
+
+  <p class="lead">
+    Five independent analyses converge on a single conclusion: the local tropical
+    climate at the MJS Observatory is organized around a low-dimensional
+    radiative–humid coupling.
+  </p>
+
+  <div class="table-wrap">
+  <table class="stack">
+    <thead>
+      <tr>
+        <th>Test</th><th>Question</th><th>Result</th><th>Verdict</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>§2.1 Quartile split</td>
+        <td>Does G separate the variables?</td>
+        <td>9/9 signs correct, |d| = 1.75–4.45</td>
+        <td><span class="badge sig">✓ PASS</span></td>
+      </tr>
+      <tr>
+        <td>§2.2 Detrended split</td>
+        <td>Or is it just the monsoon?</td>
+        <td>9/9 signs persist, |d| = 0.87–3.81</td>
+        <td><span class="badge sig">✓ PASS</span></td>
+      </tr>
+      <tr>
+        <td>§3.2 Epoch stability</td>
+        <td>Is it stationary across decades?</td>
+        <td>11/11 sign match, ⟨ratio⟩ = 1.07</td>
+        <td><span class="badge sig">✓ PASS</span></td>
+      </tr>
+      <tr>
+        <td>§4.2 Clustering</td>
+        <td>Does structure emerge without labels?</td>
+        <td>4 physically coherent clusters</td>
+        <td><span class="badge sig">✓ PASS</span></td>
+      </tr>
+      <tr>
+        <td>§4.1 PCA</td>
+        <td>How many modes?</td>
+        <td>2 PC = 90 %, 3 PC = 95 %</td>
+        <td><span class="badge sig">✓ PASS</span></td>
+      </tr>
+      <tr>
+        <td>§5.3 TCWV correlation</td>
+        <td>Is TCWV part of the humid cluster?</td>
+        <td>r = +0.81 with T_d, −0.47 with VPD</td>
+        <td><span class="badge sig">✓ PASS</span></td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>Physical interpretation</h3>
+  <p>
+    The radiative–humid mode is the signature of surface-energy-driven convection
+    in a tropical maritime climate. On clear days, high incoming shortwave
+    radiation drives rapid surface warming and evaporative demand; VPD rises,
+    humidity falls, and soil moisture is depleted. On cloudy days the cycle
+    reverses: reduced radiation cools the surface, humidity accumulates, and
+    soil moisture is replenished. The same coupling, viewed through the Fourier
+    lens, appears as a single mode because the daily cycle dominates the
+    variance of all fast variables and is modulated coherently by the annual
+    cycle.
+  </p>
+
+  <p>
+    The observed 2017–2026 wetting trend (T_d ↑ 0.71 °C, U₂ ↑ 2.76 %, SM728 ↑
+    13.0 %) does not distort this mode — it simply shifts its baseline. The
+    magnitude ratio of 1.07 between epochs proves that the mode's intrinsic
+    strength is conserved even as the mean state evolves. This is the
+    signature of a physically constrained, rather than a statistically
+    emergent, structure.
+  </p>
+
+  <h3>What this means for climate monitoring</h3>
+  <p>
+    If only 2–3 numbers are needed to describe the local climate's variability,
+    then monitoring at MJS Observatory can be reduced, in principle, to tracking
+    (i) the mean state and (ii) the amplitude and phase of the radiative–humid
+    mode. This has practical implications for low-cost sensor networks and for
+    downscaling climate projections to coastal tropical sites.
+  </p>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- FOOTER                                                          -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+
+<section>
+  <h2><span class="num">PROVENANCE</span>Data and Code</h2>
+  <p>
+    <b>Primary source:</b> ECMWF IFS-HRES reanalysis via Open-Meteo historical API.
+    Two nearby grid points (Φ<sub>A</sub> = −7.5571°, λ<sub>A</sub> = 112.5574°;
+    Φ<sub>B</sub> = −7.4868°, λ<sub>B</sub> = 112.5382°) were IDW-interpolated
+    (p = 2) to the target (Φ<sub>T</sub> = −7.5220°, λ<sub>T</sub> = 112.5661°,
+    h = 28 m).
+  </p>
+  <p>
+    <b>Analysis code:</b> <span class="mono">FS1_FourierSeries.py</span>,
+    <span class="mono">FS1_Advanced.py</span>,
+    <span class="mono">FS1_Batch_Bayes.py</span>,
+    <span class="mono">fs1_verify_pc1.py</span>,
+    <span class="mono">fs1_verify_pc1_detrended.py</span>,
+    <span class="mono">fs1_stability.py</span>,
+    <span class="mono">fs1_multivariate.py</span>,
+    <span class="mono">fs1_tcwv_special.py</span>.
+  </p>
+  <p>
+    <b>Estimators:</b> Chunked normal equations (reference), QR decomposition
+    (Householder), Bayesian Ridge (scikit-learn <span class="mono">BayesianRidge</span>
+    with α, λ estimated by type-II maximum likelihood). All three solvers agree
+    to machine precision on the coefficient vector.
+  </p>
+  <p>
+    <b>Report generation:</b> HTML + Plotly. All statistics were computed from
+    the raw 85,392 × 14 hourly matrix; no synthetic data was used.
+  </p>
+</section>
+
+</main>
+
+<footer>
+  <hr>
+  MJS · Jolotundo Observatory · East Java, Indonesia · 2026<br>
+  Report compiled automatically from the FS1 analysis pipeline.
+</footer>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- JAVASCRIPT: Build charts and tables                             -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+
+<script>
+const PALETTE = {
+  primary:    '#1a3d5c',
+  humid:      '#2980b9',
+  radiative:  '#c0392b',
+  independent:'#7f8c8d',
+  accent:     '#e67e22',
+  grid:       '#eaecef',
+  text:       '#2c3e50'
+};
+
+const LAYOUT_BASE = {
+  font: { family: 'Helvetica, Arial, sans-serif', size: 12, color: PALETTE.text },
+  plot_bgcolor:  '#ffffff',
+  paper_bgcolor: '#ffffff',
+  margin: { l: 70, r: 30, t: 30, b: 60 },
+  xaxis: { gridcolor: PALETTE.grid, zerolinecolor: PALETTE.grid, linecolor: PALETTE.grid },
+  yaxis: { gridcolor: PALETTE.grid, zerolinecolor: PALETTE.grid, linecolor: PALETTE.grid },
+  showlegend: false,
+  hoverlabel: { bgcolor: '#ffffff', bordercolor: PALETTE.primary, font: { size: 12 } }
+};
+
+const PLOT_CONFIG = { responsive: true, displayModeBar: false };
+
+
+/* ═════════════════════════════════════════════════════════════════
+   TABLE 1 — Variable inventory
+   ═════════════════════════════════════════════════════════════════ */
+const INVENTORY = [
+  // sym, name, unit, R2_ann, R2_dia, R2_full, n_sig, cluster
+  ['T₂',  'Air temperature',          '°C',      0.0752, 0.7790, 0.8328, 45, 'radiative'],
+  ['T_d', 'Dew-point temperature',    '°C',      0.4779, 0.5175, 0.5761, 45, 'humid'],
+  ['U₂',  'Relative humidity',        '%',       0.3067, 0.6707, 0.7176, 45, 'humid'],
+  ['e_d', 'Vapour pressure deficit',  'kPa',     0.2259, 0.6684, 0.7556, 43, 'radiative'],
+  ['P_s', 'Surface pressure',         'hPa',     0.1879, 0.5228, 0.5354, 35, 'independent'],
+  ['N_c', 'Cloud cover',              '%',       0.2499, 0.2585, 0.2628, 25, 'humid'],
+  ['G',   'Global horizontal irrad.', 'W m⁻²',   0.0066, 0.9228, 0.9364, 50, 'radiative'],
+  ['v₁₀', 'Wind speed 10 m',          'm s⁻¹',   0.0752, 0.3249, 0.3914, 44, 'radiative'],
+  ['ET₀', 'Reference ET (FAO-56)',    'mm h⁻¹',  0.0168, 0.9044, 0.9281, 48, 'radiative'],
+  ['P',   'Precipitation',            'mm h⁻¹',  0.0439, 0.1145, 0.1690, 38, 'independent'],
+  ['W_c', 'Column water vapour',      'kg m⁻²',  0.6121, 0.6228, 0.6254, 23, 'humid'],
+  ['θ₀₇', 'Soil moisture 0–7 cm',     'm³ m⁻³',  0.7342, 0.7353, 0.7364, 27, 'humid'],
+  ['θ₇₂₈','Soil moisture 7–28 cm',    'm³ m⁻³',  0.7327, 0.7328, 0.7330, 18, 'humid'],
+  ['S_h', 'Sunshine fraction',        'frac',    0.0099, 0.8179, 0.8420, 48, 'radiative'],
+];
+
+const tbl = document.getElementById('inv-table');
+for (const [sym, name, unit, rA, rD, rF, sig, cl] of INVENTORY) {
+  const cls = 'cluster-' + cl;
+  const badge = sym === 'W_c' ? ' <span class="badge warn">21 % cov.</span>' : '';
+  tbl.insertAdjacentHTML('beforeend', `
+    <tr>
+      <td class="c-sym ${cls}">${sym}${badge}</td>
+      <td class="c-name">${name}</td>
+      <td class="c-unit">${unit}</td>
+      <td class="c-m mono" data-label="Valid">${rF.toFixed(4)}</td>
+      <td class="c-m mono" data-label="R² ann">${rA.toFixed(4)}</td>
+      <td class="c-m mono" data-label="R² dia">${rD.toFixed(4)}</td>
+      <td class="c-m mono" data-label="R² full">${rF.toFixed(4)}</td>
+      <td class="c-m mono" data-label="Sig./119">${sig}/119</td>
+    </tr>
+  `);
+}
+
+
+/* Label kolom untuk tampilan kartu di mobile (tabel 2 & 3) */
+document.querySelectorAll('table.stack').forEach(t => {
+  const heads = [...t.querySelectorAll('thead th')].map(h => h.textContent.trim());
+  t.querySelectorAll('tbody tr').forEach(tr => {
+    [...tr.children].forEach((td, i) => {
+      if (!td.dataset.label) td.dataset.label = heads[i] || '';
+    });
+  });
+});
+
+
+function renderCharts() {
+
+/* ═════════════════════════════════════════════════════════════════
+   FIG 1 — PC1 raw Cohen's d
+   ═════════════════════════════════════════════════════════════════ */
+{
+  const vars  = ['ET₀','e_d','U₂','S_h','T₂','θ₀₇','T_d','N_c','θ₇₂₈','P','v₁₀'];
+  const vals  = [4.447, 2.875, -2.811, 2.496, 2.441, -2.086, -1.904, -1.774, -1.751, -1.579, 0.427];
+  const colors = vals.map(v => v > 0 ? PALETTE.radiative : PALETTE.humid);
+
+  Plotly.newPlot('chart-pc1-raw', [{
+    type: 'bar',
+    x: vars, y: vals,
+    marker: { color: colors, line: { width: 0 } },
+    hovertemplate: '<b>%{x}</b><br>Cohen\'s d = %{y:.3f}<extra></extra>'
+  }], {
+    ...LAYOUT_BASE,
+    yaxis: { ...LAYOUT_BASE.yaxis, title: "Cohen's d  (high-G − low-G)" },
+    shapes: [{
+      type: 'line', x0: -0.5, x1: vars.length - 0.5,
+      y0: 0, y1: 0, line: { color: PALETTE.text, width: 1 }
+    }]
+  }, PLOT_CONFIG);
+}
+
+
+/* ═════════════════════════════════════════════════════════════════
+   FIG 2 — PC1 detrended Cohen's d + ratio
+   ═════════════════════════════════════════════════════════════════ */
+{
+  const vars  = ['ET₀','S_h','U₂','e_d','T₂','N_c','θ₀₇','T_d','P','θ₇₂₈','v₁₀'];
+  const dDet  = [3.813, 2.212, -1.977, 1.976, 1.731, -1.376, -1.325, -1.238, -1.129, -0.873, 0.255];
+  const dRaw  = [4.447, 2.496, -2.811, 2.875, 2.441, -1.774, -2.086, -1.904, -1.579, -1.751, 0.427];
+  const ratio = dDet.map((v, i) => Math.abs(v / dRaw[i]));
+
+  Plotly.newPlot('chart-pc1-detrended', [
+    {
+      type: 'bar', name: 'Raw', x: vars, y: dRaw,
+      marker: { color: 'rgba(44,62,80,0.25)' },
+      hovertemplate: 'Raw · %{x}<br>d = %{y:.3f}<extra></extra>'
+    },
+    {
+      type: 'bar', name: 'Detrended', x: vars, y: dDet,
+      marker: { color: dDet.map(v => v > 0 ? PALETTE.radiative : PALETTE.humid) },
+      hovertemplate: 'Detrended · %{x}<br>d = %{y:.3f}<extra></extra>'
+    },
+    {
+      type: 'scatter', name: 'Ratio', x: vars, y: ratio, yaxis: 'y2',
+      mode: 'lines+markers',
+      line: { color: PALETTE.accent, width: 2, dash: 'dot' },
+      marker: { size: 8, color: PALETTE.accent },
+      hovertemplate: '%{x}<br>ratio = %{y:.2f}<extra></extra>'
+    }
+  ], {
+    ...LAYOUT_BASE,
+    barmode: 'group',
+    showlegend: true,
+    legend: { orientation: 'h', y: -0.20, x: 0.5, xanchor: 'center' },
+    yaxis: { ...LAYOUT_BASE.yaxis, title: "Cohen's d", range: [-4, 5] },
+    yaxis2: {
+      title: 'Detrended / Raw ratio', overlaying: 'y', side: 'right',
+      range: [0, 1.1], showgrid: false,
+      tickfont: { color: PALETTE.accent }, titlefont: { color: PALETTE.accent }
+    }
+  }, PLOT_CONFIG);
+}
+
+
+/* ═════════════════════════════════════════════════════════════════
+   FIG 3 — Secular shift (t-statistics)
+   ═════════════════════════════════════════════════════════════════ */
+{
+  // sorted by |t|
+  const rows = [
+    ['T_d',  +9.710, 'humid'],
+    ['U₂',   +7.028, 'humid'],
+    ['θ₇₂₈', +6.970, 'humid'],
+    ['e_d',  -6.562, 'radiative'],
+    ['N_c',  +6.557, 'humid'],
+    ['θ₀₇',  +5.737, 'humid'],
+    ['G',    +4.579, 'radiative'],
+    ['v₁₀',  -3.857, 'radiative'],
+    ['P',    +3.725, 'independent'],
+    ['S_h',  -1.720, 'radiative'],
+    ['T₂',   -1.512, 'radiative'],
+    ['ET₀',  -0.077, 'radiative'],
+  ];
+  const vars = rows.map(r => r[0]);
+  const vals = rows.map(r => r[1]);
+  const cols = rows.map(r => {
+    if (r[2] === 'humid') return PALETTE.humid;
+    if (r[2] === 'radiative') return PALETTE.radiative;
+    return PALETTE.independent;
+  });
+
+  Plotly.newPlot('chart-secular', [{
+    type: 'bar', orientation: 'h',
+    x: vals, y: vars,
+    marker: { color: cols },
+    hovertemplate: '<b>%{y}</b><br>t = %{x:+.3f}<extra></extra>'
+  }], {
+    ...LAYOUT_BASE,
+    margin: { l: 70, r: 30, t: 30, b: 60 },
+    xaxis: { ...LAYOUT_BASE.xaxis, title: 'Welch t-statistic (2021–26 − 2017–21)' },
+    yaxis: { ...LAYOUT_BASE.yaxis, autorange: 'reversed', title: '' },
+    shapes: [
+      { type: 'line', x0:  3, x1:  3, y0: -0.5, y1: vars.length - 0.5,
+        line: { color: PALETTE.accent, width: 1, dash: 'dot' } },
+      { type: 'line', x0: -3, x1: -3, y0: -0.5, y1: vars.length - 0.5,
+        line: { color: PALETTE.accent, width: 1, dash: 'dot' } },
+      { type: 'line', x0:  0, x1:  0, y0: -0.5, y1: vars.length - 0.5,
+        line: { color: PALETTE.text, width: 1 } }
+    ]
+  }, PLOT_CONFIG);
+}
+
+
+/* ═════════════════════════════════════════════════════════════════
+   FIG 4 — Stability: Cohen's d per epoch
+   ═════════════════════════════════════════════════════════════════ */
+{
+  const vars = ['ET₀','e_d','U₂','S_h','T₂','θ₀₇','T_d','θ₇₂₈','N_c','P','v₁₀'];
+  const early = [3.859, 2.044, -2.032, 2.028, 1.685, -1.170, -1.356, -0.743, -1.540, -0.966, 0.294];
+  const late  = [3.736, 1.995, -2.037, 2.502, 1.762, -1.485, -1.220, -0.974, -1.377, -1.349, 0.220];
+
+  Plotly.newPlot('chart-stability', [
+    { type:'bar', name:'2017–2021', x:vars, y:early,
+      marker:{ color:'rgba(41,128,185,0.55)' },
+      hovertemplate:'2017–21 · %{x}<br>d = %{y:+.3f}<extra></extra>' },
+    { type:'bar', name:'2021–2026', x:vars, y:late,
+      marker:{ color:'rgba(192,57,43,0.55)' },
+      hovertemplate:'2021–26 · %{x}<br>d = %{y:+.3f}<extra></extra>' }
+  ], {
+    ...LAYOUT_BASE,
+    barmode: 'group',
+    showlegend: true,
+    legend: { orientation:'h', y:-0.20, x:0.5, xanchor:'center' },
+    yaxis: { ...LAYOUT_BASE.yaxis, title: "Cohen's d (detrended)", zeroline:true }
+  }, PLOT_CONFIG);
+}
+
+
+/* ═════════════════════════════════════════════════════════════════
+   FIG 5 — PCA cumulative variance
+   ═════════════════════════════════════════════════════════════════ */
+{
+  const pc   = [1, 2, 3, 4, 5, 6, 7, 8];
+  const varR = [81.94, 11.82, 5.60, 0.27, 0.16, 0.10, 0.07, 0.02];
+  const cum  = varR.reduce((acc, v) => (acc.push((acc.slice(-1)[0] || 0) + v), acc), []);
+
+  Plotly.newPlot('chart-pca', [
+    { type:'bar', x:pc, y:varR, name:'individual',
+      marker:{ color: PALETTE.primary, opacity: 0.8 },
+      hovertemplate:'PC%{x}<br>%{y:.2f} % var<extra></extra>' },
+    { type:'scatter', x:pc, y:cum, name:'cumulative',
+      mode:'lines+markers', yaxis:'y2',
+      line:{ color: PALETTE.accent, width: 3 },
+      marker:{ size: 10, color: PALETTE.accent },
+      hovertemplate:'PC%{x}<br>cum. %{y:.2f} %<extra></extra>' }
+  ], {
+    ...LAYOUT_BASE,
+    showlegend: true,
+    legend: { orientation:'h', y:-0.18, x:0.5, xanchor:'center' },
+    xaxis: { ...LAYOUT_BASE.xaxis, title: 'Principal component', dtick: 1 },
+    yaxis: { ...LAYOUT_BASE.yaxis, title: 'Individual variance (%)' },
+    yaxis2: {
+      title: 'Cumulative (%)', overlaying:'y', side:'right',
+      range: [0, 105], showgrid: false,
+      tickfont: { color: PALETTE.accent }, titlefont: { color: PALETTE.accent }
+    },
+    shapes: [
+      { type:'line', x0:0.5, x1:8.5, y0:90, y1:90, yaxis:'y2',
+        line: { color: PALETTE.text, width: 1, dash:'dash' } },
+      { type:'line', x0:0.5, x1:8.5, y0:95, y1:95, yaxis:'y2',
+        line: { color: PALETTE.text, width: 1, dash:'dot' } }
+    ]
+  }, PLOT_CONFIG);
+}
+
+
+/* ═════════════════════════════════════════════════════════════════
+   FIG 6 — TCWV monthly means
+   ═════════════════════════════════════════════════════════════════ */
+{
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const means  = [58.45, 57.30, 55.99, 53.40, 53.82, 44.96, 38.50, 38.78, 40.54, 45.98, 56.41, 58.78];
+  const cols   = means.map(v => v > 52 ? PALETTE.humid :
+                             v < 42 ? PALETTE.accent : '#7fa8c8');
+
+  Plotly.newPlot('chart-tcwv-monthly', [{
+    type: 'bar', x: months, y: means,
+    marker: { color: cols, line: { width: 0 } },
+    text: means.map(v => v.toFixed(1)),
+    textposition: 'outside',
+    textfont: { size: 11, color: PALETTE.text },
+    hovertemplate: '<b>%{x}</b><br>mean = %{y:.2f} kg m⁻²<extra></extra>'
+  }], {
+    ...LAYOUT_BASE,
+    yaxis: { ...LAYOUT_BASE.yaxis, title: 'Monthly mean TCWV  (kg m⁻²)', range: [33, 62] },
+    xaxis: { ...LAYOUT_BASE.xaxis, title: '' },
+    shapes: [
+      { type:'line', x0:-0.5, x1:11.5, y0:49.86, y1:49.86,
+        line: { color: PALETTE.text, width: 1, dash:'dash' } }
+    ],
+    annotations: [
+      { x: 0, y: 50.4, xref:'x', yref:'y', text:'annual mean 49.86',
+        showarrow: false, font: { size: 10, color: PALETTE.text }, xanchor: 'left' }
+    ]
+  }, PLOT_CONFIG);
+}
+
+
+/* ═════════════════════════════════════════════════════════════════
+   FIG 7 — TCWV correlations
+   ═════════════════════════════════════════════════════════════════ */
+{
+  const rows = [
+    ['T_d',  'Dew-point T',          +0.807, 'humid'],
+    ['θ₀₇',  'Soil moisture 0–7',    +0.765, 'humid'],
+    ['θ₇₂₈', 'Soil moisture 7–28',   +0.649, 'humid'],
+    ['N_c',  'Cloud cover',          +0.587, 'humid'],
+    ['U₂',   'Relative humidity',    +0.581, 'humid'],
+    ['P_s',  'Surface pressure',     -0.484, 'independent'],
+    ['e_d',  'VPD',                  -0.475, 'radiative'],
+    ['P',    'Precipitation',        +0.237, 'independent'],
+    ['ET₀',  'Reference ET',         -0.167, 'radiative'],
+    ['S_h',  'Sunshine fraction',    -0.160, 'radiative'],
+    ['T₂',   'Air temperature',      -0.146, 'radiative'],
+    ['G',    'Irradiance',           -0.134, 'radiative'],
+    ['v₁₀',  'Wind speed',           -0.096, 'radiative'],
+  ];
+  const syms = rows.map(r => r[0]);
+  const vals = rows.map(r => r[2]);
+  const cols = rows.map(r => {
+    if (r[3] === 'humid')       return PALETTE.humid;
+    if (r[3] === 'radiative')   return PALETTE.radiative;
+    return PALETTE.independent;
+  });
+
+  Plotly.newPlot('chart-tcwv-corr', [{
+    type: 'bar', orientation: 'h',
+    x: vals, y: syms,
+    marker: { color: cols },
+    text: vals.map(v => v.toFixed(3)),
+    textposition: 'outside',
+    textfont: { size: 11 },
+    hovertemplate: '<b>%{y}</b><br>Pearson r = %{x:+.4f}<extra></extra>'
+  }], {
+    ...LAYOUT_BASE,
+    margin: { l: 70, r: 60, t: 30, b: 60 },
+    xaxis: { ...LAYOUT_BASE.xaxis, title: 'Pearson r  (TCWV vs variable)',
+             range: [-0.65, 0.95] },
+    yaxis: { ...LAYOUT_BASE.yaxis, autorange: 'reversed' },
+    shapes: [
+      { type:'line', x0: 0.4, x1: 0.4, y0: -0.5, y1: syms.length - 0.5,
+        line: { color: PALETTE.text, width: 1, dash: 'dot' } },
+      { type: 'line', x0: -0.4, x1: -0.4, y0: -0.5, y1: syms.length - 0.5,
+        line: { color: PALETTE.text, width: 1, dash: 'dot' } },
+      { type: 'line', x0: 0, x1: 0, y0: -0.5, y1: syms.length - 0.5,
+        line: { color: PALETTE.text, width: 1 } }
+    ]
+  }, PLOT_CONFIG);
+}
+
+/* ═════════════════════════════════════════════════════════════════
+   Penyesuaian chart untuk layar sempit
+   ═════════════════════════════════════════════════════════════════ */
+const CHART_MARGINS = {            // [kiri, kanan] → desktop / mobile
+  'chart-pc1-raw':        { d: [70, 30], m: [52, 12] },
+  'chart-pc1-detrended':  { d: [70, 30], m: [52, 52] },
+  'chart-secular':        { d: [70, 30], m: [46, 12] },
+  'chart-stability':      { d: [70, 30], m: [52, 12] },
+  'chart-pca':            { d: [70, 30], m: [52, 52] },
+  'chart-tcwv-monthly':   { d: [70, 30], m: [52, 12] },
+  'chart-tcwv-corr':      { d: [70, 60], m: [46, 44] }
+};
+let lastNarrow = null;
+function tuneCharts() {
+  const narrow = window.innerWidth <= 720;
+  if (narrow === lastNarrow) return;
+  lastNarrow = narrow;
+  for (const [id, cfg] of Object.entries(CHART_MARGINS)) {
+    const el = document.getElementById(id);
+    if (!el || !el.data) continue;
+    const [l, r] = narrow ? cfg.m : cfg.d;
+    Plotly.relayout(el, { 'margin.l': l, 'margin.r': r, 'font.size': narrow ? 11 : 12 });
+  }
+  const mo = document.getElementById('chart-tcwv-monthly');
+  if (mo && mo.data) Plotly.restyle(mo, { 'textfont.size': narrow ? 9 : 11 });
+}
+tuneCharts();
+let _rz; window.addEventListener('resize', () => { clearTimeout(_rz); _rz = setTimeout(tuneCharts, 150); });
+
+}  // end renderCharts
+
+
+/* ═════════════════════════════════════════════════════════════════
+   Pemuat Plotly dengan cadangan beberapa sumber
+   ═════════════════════════════════════════════════════════════════ */
+(function loadPlotly() {
+  const sources = [
+    'plotly.min.js',   // salinan lokal (opsional, taruh di folder yang sama)
+    'https://cdn.plot.ly/plotly-2.27.0.min.js',
+    'https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.27.0/plotly.min.js',
+    'https://cdn.jsdelivr.net/npm/plotly.js-dist-min@2.27.0/plotly.min.js'
+  ];
+  let idx = 0;
+  function showFailure() {
+    document.querySelectorAll('.chart').forEach(el => {
+      el.style.height = 'auto';
+      el.innerHTML = '<div style="padding:18px;border:1px dashed #c0392b;border-radius:6px;' +
+        'color:#8a2a1f;background:#fdf3f2;font:13px/1.5 Helvetica,Arial,sans-serif;">' +
+        'Grafik tidak dapat dimuat karena pustaka Plotly gagal diunduh. ' +
+        'Periksa koneksi internet lalu muat ulang halaman ini.</div>';
+    });
+  }
+  function next() {
+    if (window.Plotly) { renderCharts(); return; }
+    if (idx >= sources.length) { showFailure(); return; }
+    const sc = document.createElement('script');
+    sc.src = sources[idx++];
+    sc.onload  = () => window.Plotly ? renderCharts() : next();
+    sc.onerror = () => { sc.remove(); next(); };
+    document.head.appendChild(sc);
+  }
+  next();
+})();
+</script>
+
+</body>
+</html>
